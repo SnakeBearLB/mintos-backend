@@ -1,13 +1,9 @@
 
 // DEPENDENCIES
 require("dotenv").config();
-
 const { PORT = 4000, MONGODB_URL } = process.env;
-
 const express = require("express");
-
 const app = express();
-
 const mongoose = require("mongoose");
 
 // Middleware
@@ -26,11 +22,17 @@ mongoose.connection
   .on("close", () => console.log("You are disconnected from mongoose"))
   .on("error", (error) => console.log(error));
 
-// // Models
+
+// const opts = {
+//   timestamps: { currentTime: () => Math.floor(Date.now() / 1000) },
+// }
+
+
+// Models
 const AssetSchema = new mongoose.Schema({
-  name: String,
+  title: String,
   image: String,
-  $currentDate: {$type: "date"},
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Assets = mongoose.model("Assets", AssetSchema);
@@ -44,9 +46,31 @@ app.use(express.json());
 
 // Routes
 
-// create a test route
+// test route
 app.get('/', (req, res) => {
   res.send("hello world")
+});
+
+// asset index route
+app.get('/asset', async (req, res) => {
+  try {
+    // send all assets
+    res.json(await Assets.find({}));
+  } catch (error) {
+    // send error
+    res.status(400).json(error);
+  }
+});
+
+// asset create route
+app.post('/asset', async (req, res) => {
+  try {
+    // send all assets
+    res.json(await Assets.create(req.body));
+  } catch (error) {
+    // error
+    res.status(400).json(error);
+  }
 });
 
 app.listen(PORT, () => console.log(`listening on PORT ${PORT}`))
