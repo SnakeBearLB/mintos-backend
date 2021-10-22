@@ -78,6 +78,16 @@ app.post('/asset', async (req, res) => {
   }
 });
 
+// asset edit route
+app.put('/asset/:id', async (req, res) => {
+  try {
+    // send all assets
+    res.json(await Assets.findByIdAndUpdate(req.params.id, req.body, { new: true }));
+  } catch (error) {
+    res.status(400).json(error);
+  }
+})
 
 
-app.listen(PORT, () => console.log(`listening on PORT ${PORT}`))
+app.listen(PORT, () => console.log(`listening on PORT ${PORT}`));
+
