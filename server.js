@@ -23,11 +23,6 @@ mongoose.connection
   .on("error", (error) => console.log(error));
 
 
-// const opts = {
-//   timestamps: { currentTime: () => Math.floor(Date.now() / 1000) },
-// }
-
-
 // Models
 const AssetSchema = new mongoose.Schema({
   title: String,
@@ -62,6 +57,16 @@ app.get('/asset', async (req, res) => {
   }
 });
 
+// asset delete route
+app.delete('/asset/:id', async (req, res) => {
+  try {
+    // send all assets
+    res.json(await Assets.findByIdAndRemove(req.params.id))
+  } catch (error) {
+    res.status(400).json(error);
+  }
+});
+
 // asset create route
 app.post('/asset', async (req, res) => {
   try {
@@ -72,5 +77,7 @@ app.post('/asset', async (req, res) => {
     res.status(400).json(error);
   }
 });
+
+
 
 app.listen(PORT, () => console.log(`listening on PORT ${PORT}`))
